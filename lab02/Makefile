@@ -1,50 +1,34 @@
-UNAME_S := $(shell uname -s)
-CC=gcc
-LD=gcc
-CFLAGS=-ggdb -Wall -std=c99
-LDFLAGS=
+# 编译器配置
+CC = gcc
+CFLAGS = -ggdb -Wall -std=c99
+LDFLAGS =
 
-ifeq ($(UNAME_S), Darwin)
-    MEMCHECK=valgrind --tool=memcheck --leak-check=full --track-origins=yes --dsymutil=yes
-endif
+# 定义要生成的可执行文件（对应你的项目目标）
+TARGETS = test_bit_ops test_lfsr vector-test
 
-ifeq ($(UNAME_S), Linux)
-    MEMCHECK=valgrind --tool=memcheck --leak-check=full --track-origins=yes
-endif
+# --------------------------
+# 默认目标：make 命令会执行这个 all 目标
+all: $(TARGETS)  # 把所有可执行文件作为 all 的依赖，执行 make 时会编译这些目标
 
-BIT_OPS_OBJS = bit_ops.o test_bit_ops.o
-BIT_OPS_PROG = bit_ops
+# --------------------------
+# test_bit_ops 的编译规则
+test_bit_ops: bit_ops.o test_bit_ops.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-LFSR_OBJS = lfsr.o test_lfsr.o
-LFSR_PROG = lfsr
+# test_lfsr 的编译规则
+test_lfsr: lfsr.o test_lfsr.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-VECTOR_OBJS=vector.o vector-test.o
-VECTOR_PROG=vector-test
+# vector-test 的编译规则
+vector-test: vector.o vector-test.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-BINARIES=$(VECTOR_PROG) $(BIT_OPS_PROG) $(LFSR_PROG)
-
-all: $(BINARIES)
-
-$(BIT_OPS_PROG): $(BIT_OPS_OBJS)
-	$(CC) $(CFLAGS) -g -o $(BIT_OPS_PROG) $(BIT_OPS_OBJS) $(LDFLAGS)
-
-$(LFSR_PROG): $(LFSR_OBJS)
-	$(CC) $(CFLAGS) -g -o $(LFSR_PROG) $(LFSR_OBJS) $(LDFLAGS)
-
-lfsr.c: lfsr.h
-test_lfsr.c: lfsr.h
-
-bit_ops.c: bit_ops.h
-test_bit_ops.c: bit_ops.h
-
+# --------------------------
+# 通用规则：.c 文件编译为 .o 文件
 .c.o:
-	$(CC) -c $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $<
 
-vector-memcheck: $(VECTOR_PROG)
-	$(MEMCHECK) ./$(VECTOR_PROG)
-
+# --------------------------
+# 清理编译产物
 clean:
-	-rm -rf core *.o *~ "#"*"#" Makefile.bak $(BINARIES) *.dSYM
-
-vector.c: vector.h
-vector-test.c: vector.h
+	rm -f *.o $(TARGETS)
