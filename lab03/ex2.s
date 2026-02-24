@@ -29,7 +29,7 @@ fun:
     jr ra
 
 main:
-    # BEGIN PROLOGUE
+    # BEGIN PROLOGUE 预处理
     addi sp, sp, -20
     sw s0, 0(sp)
     sw s1, 4(sp)
@@ -37,16 +37,17 @@ main:
     sw s3, 12(sp)
     sw ra, 16(sp)
     # END PROLOGUE
-    addi t0, x0, 0
-    addi s0, x0, 0
-    la s1, source
-    la s2, dest
+    addi t0, x0, 0 #k
+    addi s0, x0, 0 #sum
+    la s1, source #source point
+    la s2, dest #dest point
 loop:
     slli s3, t0, 2
     add t1, s1, s3
     lw t2, 0(t1)
+    #source[k] value is t2
     beq t2, x0, exit
-    add a0, x0, t2
+    add a0, x0, t2 #a0 return int
     addi sp, sp, -8
     sw t0, 0(sp)
     sw t2, 4(sp)
@@ -54,8 +55,8 @@ loop:
     lw t0, 0(sp)
     lw t2, 4(sp)
     addi sp, sp, 8
-    add t2, x0, a0
-    add t3, s2, s3
+    add t2, x0, a0 #dest[k]
+    add t3, s2, s3 #same k
     sw t2, 0(t3)
     add s0, s0, t2
     addi t0, t0, 1

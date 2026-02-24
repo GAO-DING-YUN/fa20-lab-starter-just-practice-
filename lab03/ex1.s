@@ -1,13 +1,13 @@
 .data
-.word 2, 4, 6, 8
-n: .word 9
+.word 2, 4, 6, 8 #array of four int
+n: .word 2 #n = 2
 
 .text
 main:
     add t0, x0, x0
     addi t1, x0, 1
-    la t3, n
-    lw t3, 0(t3)
+    la t3, n #get n address
+    lw t3, 0(t3) #get t3 + 0 value
 fib:
     beq t3, x0, finish
     add t2, t1, t0
