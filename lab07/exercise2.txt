@@ -1,5 +1,5 @@
-1.
-2.
+1. 4, 6 no far jump
+2. 2, 5 always far jump
 
 --- lines below are ignored by the AG ---
 
